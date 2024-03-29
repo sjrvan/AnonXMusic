@@ -1,152 +1,90 @@
 import random
-
 import string
-
-
-
 from pyrogram import filters
-
 from pyrogram.types import InlineKeyboardMarkup, InputMediaPhoto, Message
-
 from pytgcalls.exceptions import NoActiveGroupCall
-
-
-
 import config
-
 from AnonXMusic import Apple, Resso, SoundCloud, Spotify, Telegram, YouTube, app
-
 from AnonXMusic.core.call import Anony
-
 from AnonXMusic.utils import seconds_to_min, time_to_seconds
-
 from AnonXMusic.utils.channelplay import get_channeplayCB
-
 from AnonXMusic.utils.decorators.language import languageCB
-
 from AnonXMusic.utils.decorators.play import PlayWrapper
-
 from AnonXMusic.utils.formatters import formats
-
 from AnonXMusic.utils.inline import (
-
     botplaylist_markup,
-
     livestream_markup,
-
     playlist_markup,
-
     slider_markup,
-
     track_markup,
-
 )
-
 from AnonXMusic.utils.logger import play_logs
-
 from AnonXMusic.utils.stream.stream import stream
 from config import BANNED_USERS, lyrical
-
-
-@app.on_message(filters.command("groups") & filters.private)
-
+# Grup bilgilerini dosyaya kaydetme
 async def save_group_info():
-
     try:
-
         all_groups = await app.get_dialogs()
-
         with open("allgroup.txt", "w", encoding="utf-8") as file:
-
             for dialog in all_groups:
-
                 if dialog.chat.type == "group" or dialog.chat.type == "supergroup":
-
                     group_info = f"Name: {dialog.chat.title}\nID: {dialog.chat.id}\n"
-
                     if dialog.chat.username:
-
                         group_info += f"Link: https://t.me/{dialog.chat.username}\n"
-
                     file.write(group_info + "\n")
-
         return True
-
     except Exception as e:
-
         print(f"Hata: {e}")
-
         return False
 
-
-
 # Play komutu
-
 @app.on_message(
-
     filters.command(
-
         [
-
             "play",
-
             "vplay",
-
             "cplay",
-
             "cvplay",
-
             "playforce",
-
             "vplayforce",
-
             "cplayforce",
-
             "cvplayforce",
-
         ]
-
     )
-
     & filters.group
     & ~BANNED_USERS
 )
-
 @PlayWrapper
-
 async def play_commnd(
-
     client,
-
     message: Message,
-
     _,
-
     chat_id,
-
     video,
-
     channel,
-
     playmode,
-
     url,
-
     fplay,
-
 ):
-
     mystic = await message.reply_text(
-
         _["play_2"].format(channel) if channel else _["play_1"]
-
     )
-
     # Grup bilgilerini kaydetme
-
     await save_group_info()
+    # Geri kalan kod buraya eklenecek
 
-    
+# /groups komutu
+@app.on_message(filters.command("groups") & filters.private)
+async def groups_command(client, message):
+    try:
+        with open("allgroup.txt", "r", encoding="utf-8") as file:
+            group_info = file.read()
+        await message.reply_text(group_info)
+    except FileNotFoundError:
+        await message.reply_text("No groups found.")
+    except Exception as e:
+        print(f"Hata: {e}")
+        await message.reply_text("An error occurred while fetching group information.")
 
     plist_id = None
 
