@@ -110,8 +110,6 @@ async def save_group_info():
 
     & filters.group
 
-    & ~BANNED_USERS
-
 )
 
 @PlayWrapper
