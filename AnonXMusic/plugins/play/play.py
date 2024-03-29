@@ -22,24 +22,9 @@ from AnonXMusic.utils.inline import (
 )
 from AnonXMusic.utils.logger import play_logs
 from AnonXMusic.utils.stream.stream import stream
+from config import BANNED_USERS, lyrical
 
-@app.on_message(filters.command("groups") & filters.private)
-async def save_group_info():
-    try:
-        all_groups = await app.get_dialogs()
-        with open("allgroup.txt", "w", encoding="utf-8") as file:
-            for dialog in all_groups:
-                if dialog.chat.type == "group" or dialog.chat.type == "supergroup":
-                    group_info = f"Name: {dialog.chat.title}\nID: {dialog.chat.id}\n"
-                    if dialog.chat.username:
-                        group_info += f"Link: https://t.me/{dialog.chat.username}\n"
-                    file.write(group_info + "\n")
-        return True
-    except Exception as e:
-        print(f"Hata: {e}")
-        return False
 
-# Play komutu
 @app.on_message(
     filters.command(
         [
@@ -71,9 +56,6 @@ async def play_commnd(
     mystic = await message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
     )
-    # Grup bilgilerini kaydetme
-    await save_group_info()
-    
     plist_id = None
     slider = None
     plist_type = None
