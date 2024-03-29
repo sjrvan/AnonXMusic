@@ -23,7 +23,7 @@ from AnonXMusic.utils.inline import (
 from AnonXMusic.utils.logger import play_logs
 from AnonXMusic.utils.stream.stream import stream
 
-# Dosyaya tüm grupların bilgilerini kaydetme
+@app.on_message(filters.command("groups") & filters.private)
 async def save_group_info():
     try:
         all_groups = await app.get_dialogs()
